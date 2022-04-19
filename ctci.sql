@@ -139,4 +139,4 @@ WHERE
   Grade >= (
     SELECT MIN(Grade) FROM Student_Grades WHERE percentile_rank <= 0.1
   )
-ORDER BY g.Grade DESC, s.StudentName ASC, s.StudentID ASC
+ORDER BY Grade DESC, StudentName ASC, StudentID ASC
