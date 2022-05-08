@@ -754,7 +754,7 @@ class SinglyLinkedList:
       self.first_node = None
       self.num_nodes -= 1
       return data
-    else: 
+    else:
       for node in self.__iter__():
         if node.next_node.next_node is None:
           data = node.next_node.data
@@ -959,6 +959,25 @@ def return_kth_to_last_cheat(ll: SinglyLinkedList, k: int) -> str:  # Output str
       return curr_node.data
 
 
+def return_kth_to_last_parallel(ll: SinglyLinkedList, k: int) -> str:  # Output string representation of resultant linked list -- for easier testing, so we do not have to implement equality testing of two LinkedList objects. TODO: implement equality testing and return an actual linked list.
+  """2.2. Return Kth to Last: Implement an algorithm to find the kth to last element of a singly linked list."""
+  # In this one, we use a similar idea to the _window variant, but instead of saving all the nodes, we just iterate in parallel.
+
+  # Space: O(1)
+  # Time: O(n-k)
+  node_k_ahead = ll.first_node
+  for i in range(k - 1):
+    node_k_ahead = node_k_ahead.next_node
+    if node_k_ahead is None:
+      return None
+
+  curr_node = ll.first_node
+  while node_k_ahead.next_node is not None:
+    node_k_ahead = node_k_ahead.next_node
+    curr_node = curr_node.next_node
+
+  return curr_node.data
+
 def delete_middle_node(ll: SinglyLinkedList, data: Any) -> str:  # Output string representation of resultant linked list -- for easier testing, so we do not have to implement equality testing of two LinkedList objects. TODO: implement equality testing and return an actual linked list.
   """2.3. Delete Middle Node: Implement an algorithm to delete a node in the middle (i.e., any node but the first and last node, not necessarily the exact middle) of a singly linked list, given only access to that node.
   EXAMPLE
@@ -1005,7 +1024,7 @@ def delete_middle_node_object(ll: SinglyLinkedList, node_to_delete: Node) -> str
 def partition_ll(ll: SinglyLinkedList, pivot: Any) -> str:  # Output string representation of resultant linked list -- for easier testing, so we do not have to implement equality testing of two LinkedList objects. TODO: implement equality testing and return an actual linked list.
   """2.4. Partition: Write code to partition a linked list around a value x, such that all nodes less than x come before all nodes greater than or equal to x. If x is contained within the list, the values of x only need to be after the elements less than x (see below). The partition element x can appear anywhere in the "right partition"; it does not need to appear between the left and right partitions.
   EXAMPLE
-  Input: 3 -> 5 -> 8 -> 5 - > 10 -> 2 -> 1 [partition = 5]
+  Input: 3 -> 5 -> 8 -> 5 -> 10 -> 2 -> 1 [partition = 5]
   Output: 3 -> 1 -> 2 -> 10 -> 5 -> 5 -> 8
   """
   # Space: O(1)
@@ -1054,7 +1073,7 @@ def partition_ll(ll: SinglyLinkedList, pivot: Any) -> str:  # Output string repr
 
 
 def sum_lists(ll_a: SinglyLinkedList, ll_b: SinglyLinkedList) -> str:  # Output string representation of resultant linked list -- for easier testing, so we do not have to implement equality testing of two LinkedList objects. TODO: implement equality testing and return an actual linked list.
-  """2.5. Sum Lists: You have two numbers represented by a linked list, where each node contains a single digit. The digits are stored in reverse order, such that the 1 's digit is at the head of the list. Write a function that adds the two numbers and returns the sum as a linked list.
+  """2.5. Sum Lists: You have two numbers represented by a linked list, where each node contains a single digit. The digits are stored in reverse order, such that the 1's digit is at the head of the list. Write a function that adds the two numbers and returns the sum as a linked list.
   
   EXAMPLE
   Input: (7 -> 1 -> 6) + (5 -> 9 -> 2). That is, 617 + 295.
@@ -1103,7 +1122,7 @@ def sum_lists(ll_a: SinglyLinkedList, ll_b: SinglyLinkedList) -> str:  # Output 
   return str(sum_ll)  # For testing purposes
 
 def sum_lists_reverse_representation(ll_a: SinglyLinkedList, ll_b: SinglyLinkedList) -> str:  # Output string representation of resultant linked list -- for easier testing, so we do not have to implement equality testing of two LinkedList objects. TODO: implement equality testing and return an actual linked list.
-  """2.5. Sum Lists: You have two numbers represented by a linked list, where each node contains a single digit. The digits are stored in reverse order, such that the 1 's digit is at the head of the list. Write a function that adds the two numbers and returns the sum as a linked list.
+  """2.5. Sum Lists: You have two numbers represented by a linked list, where each node contains a single digit. The digits are stored in reverse order, such that the 1's digit is at the head of the list. Write a function that adds the two numbers and returns the sum as a linked list.
   
   EXAMPLE
   Input: (7 -> 1 -> 6) + (5 -> 9 -> 2). That is, 617 + 295.
@@ -1213,16 +1232,16 @@ def intersection_ll(ll_a: SinglyLinkedList, ll_b: SinglyLinkedList) -> Node:
       return node_a
     if node_b in nodes_a:
       return node_b
-      
-  # One of the two might have leftovers 
+
+  # One of the two might have leftovers
   node_ = None
   nodes = None
   if node_a is not None and node_a.next_node is not None:
     node_ = node_a
-    nodes = node_b
+    nodes = nodes_b
   elif node_b is not None and node_b.next_node is not None:
     node_ = node_b
-    nodes = node_a
+    nodes = nodes_a
     
   if node_ is not None:
     while True:
@@ -1327,9 +1346,39 @@ def ll_loop_detection_manual(ll: SinglyLinkedList) -> Node:
 
   return None
 
+def ll_loop_detection_manual_slow(ll: SinglyLinkedList) -> Node:
+  """2.8 Loop Detection: Given a circular linked list, implement an algorithm that returns the node at the beginning of the loop.
+  DEFINITION
+    Circular linked list: A (corrupt) linked list in which a node's next pointer points to an earlier node, so as to make a loop in the linked list.
+  EXAMPLE
+    Input: A -> B -> C -> D -> E -> C [the same C as earlier]
+    Output: C
+  """
+  # Space O(1)
+  # Time O(n**2)
+  if ll.first_node is None:
+    return None
+  elif ll.first_node.next_node is ll.first_node:
+    return ll.first_node
+
+  # print(f'll_loop_detection_manual_slow({str(ll)})')
+  node = ll.first_node
+  while node is not None:
+    # print(f'  node {node}')
+    node_recheck = ll.first_node
+    while node_recheck is not node:
+      # print(f'    node_recheck {node_recheck}')
+      if node_recheck is node.next_node:
+        return node_recheck
+      node_recheck = node_recheck.next_node
+      # print(f'      node_recheck --> {node_recheck}')
+    node = node.next_node
+    # print(f'    node --> {node}')
+  return None
+
 
 ################################################
-# Ch3
+# Ch3 Stacks and Queues
 ################################################
 class StackIsFullError(Exception):
   """Indicates that the stack is full -- an item was attempted to be pushed, but the stack is already at full capacity."""
@@ -1678,7 +1727,7 @@ if __name__ == '__main__':
         (True, False, (SinglyLinkedList([1,2,3,4,1,2,3,4,1,2,3,4]),), dict(), str(SinglyLinkedList([1,2,3,4]))),
       )
     ),
-    ((return_kth_to_last, return_kth_to_last_window, return_kth_to_last_cheat),
+    ((return_kth_to_last, return_kth_to_last_window, return_kth_to_last_cheat, return_kth_to_last_parallel,),
       (
         (True, False, (SinglyLinkedList('a'), 1), dict(), 'a'),
         (True, False, (SinglyLinkedList('ab'), 1), dict(), 'b'),
@@ -1813,7 +1862,7 @@ if __name__ == '__main__':
         (False, True, (_2_7_singly_linked_list_a_02, _2_7_singly_linked_list_b_02), dict(), _2_7_singly_linked_list_a_02.first_node),
       )
     ),
-    ((ll_loop_detection, ll_loop_detection_manual,),
+    ((ll_loop_detection, ll_loop_detection_manual, ll_loop_detection_manual_slow,),
       (
         (False, True, (SinglyLinkedList([]),), dict(), None),
         (False, True, (SinglyLinkedList([1]),), dict(), None),
@@ -1864,8 +1913,8 @@ if __name__ == '__main__':
   # Combine chapters
   ################################################
   checks_tuples = (
-    checks_ch1,
-    # checks_ch2,
+    # checks_ch1,
+    checks_ch2,
     # checks_ch3,
   )
   for checks_tuple_ in checks_tuples:
